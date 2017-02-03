@@ -18,3 +18,4 @@ for å overføre filer til og fra Rasberry Pi.
                                               
                                               
 Kan du lese dette RoRo?
+- Ja det kan jeg!
