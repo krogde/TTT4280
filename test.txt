@@ -17,3 +17,4 @@ for å overføre filer til og fra Rasberry Pi.
 \____/|_|_|  |_|_|\_\ \_| \_\___/ \__|\__\___|
                                               
                                               
+Kan du lese dette RoRo?
