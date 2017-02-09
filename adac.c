@@ -112,8 +112,8 @@ int main(int argc, char **argv)
     // Write data to files
     FILE *tme;
     FILE *dat;
-    tme = fopen("timeDiff.bin", "wb+");
-    dat = fopen("sampleBuf.bin", "wb+");
+    tme = fopen("timeDiff.txt", "w+");
+    dat = fopen("sampleBuf.txt", "w+");
     fwrite(timeBuf, sizeof(timeBuf[0]), samples, tme);
     fwrite(buf, sizeof(buf[0]), (len*adc_chan+2)*samples, dat);
     fclose(tme);
