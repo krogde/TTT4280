@@ -1,21 +1,9 @@
 clearvars; close all;
 %% Open, import and close data files from C on Raspberry Pi
 % Make file IDs
-% Check computer platform and load files from correct path
-if ismac
-    % Code to run on Mac plaform
-    fidTmDf = fopen('/Volumes/kristokj/raspi/c-code/timeDiff.bin');
-    fidSpDt = fopen('/Volumes/kristokj/raspi/c-code/sampleBuf.bin');
-elseif isunix
-    % Code to run on Linux plaform
-elseif ispc
-    % Code to run on Windows platform
-    fidTmDf = fopen('\\home.ansatt.ntnu.no\kristokj\raspi\c-code\timeDiff.bin');
-    fidSpDt = fopen('\\home.ansatt.ntnu.no\kristokj\raspi\c-code\sampleBuf.bin');
-else
-    error('Platform not supported! Shutting down loadFiles.m...')
-    % Function terminates
-end
+
+fidTmDf = fopen('C:\Users\Eirik\Documents\GitHub\TTT4280\timeDiff.bin');
+fidSpDt = fopen('C:\Users\Eirik\Documents\GitHub\TTT4280\sampleBuf.bin');
 
 % Read binary data to local variables
 tmSample = fread(fidTmDf);

@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     //bcm2835_spi_setClockDivider(12);                                // Max speed for IO-lines when looped back
     //bcm2835_spi_setClockDivider(32768);                             // Testspeed for setup; 7.63kHz
     //bcm2835_spi_setClockDivider(32);                                // Max speed for setup; 7.8125MHz!!!
-    bcm2835_spi_setClockDivider(5000);                                // Current clock freq: 250MHz/divider.
+    bcm2835_spi_setClockDivider(500);                                // Current clock freq: 250MHz/divider.
     //bcm2835_spi_setClockDivider(70);                                // 3.57MHz = 250MHz/70.
     //bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                        // LTC1451
     //bcm2835_spi_chipSelect(BCM2835_SPI_CS1);                        // MCP3008
@@ -112,8 +112,8 @@ int main(int argc, char **argv)
     // Write data to files
     FILE *tme;
     FILE *dat;
-    tme = fopen("timeDiff.txt", "w+");
-    dat = fopen("sampleBuf.txt", "w+");
+    tme = fopen("timeDiff.bin", "wb+");
+    dat = fopen("sampleBuf.bin", "wb+");
     fwrite(timeBuf, sizeof(timeBuf[0]), samples, tme);
     fwrite(buf, sizeof(buf[0]), (len*adc_chan+2)*samples, dat);
     fclose(tme);
