@@ -47,8 +47,8 @@ end
 tmDiff = diff(tempData(:,8));   % Find the difference in us between
 % successive samples. A 1MHz system timer is used for timing.
 sampleData = struct('M1',tempData(:,1),'M2',tempData(:,2),'M3',...
-    tempData(:,3),'DacRx',tempData(:,4),'Ri',tempData(:,5),...
-    'Rq',tempData(:,6),'DacTx',tempData(:,7),'T_sample',tempData(:,8),...
+    tempData(:,3),'Ri',tempData(:,4),'Rq',tempData(:,5),...
+    'DacRx',tempData(:,6),'DacTx',tempData(:,7),'T_sample',tempData(:,8),...
     'T_diff',tmDiff);
 
 tmRelative = zeros (1,samples);
@@ -82,7 +82,7 @@ plot(tmRelative+45e-6,sampleData.DacRx, '-o',tmRelative+54e-6, sampleData.DacTx,
 title('DAC')
 ylim([0, 4095])
 xlabel('t [s]');
-ylabel('Conversion value');
+ylabel('Conversion value'); 
 subplot(2,2,4)
 plot(sampleData.T_diff, '-o');
 title('T diff')
