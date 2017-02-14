@@ -97,11 +97,14 @@ int main(int argc, char **argv)
         // Write value to DAC
         bcm2835_spi_chipSelect(BCM2835_SPI_CS0);    // LTC1451. Get ready for setting the DAC
         temp = counter;
-        test2 = temp & 0x00FF;
-        test1 = (temp>>8) & 0x00FF;
+        //test2 = temp & 0x00FF;
+        //test1 = (temp>>8) & 0x00FF;
         buf[(j+1)*3+1+i*(len*adc_chan+2)] = temp & 0x00FF;      // Mask out bits 1-8 first, then
         buf[(j+1)*3+i*(len*adc_chan+2)] = (temp>>8) & 0x00FF;   // Shift right to mask out bits 9-12(9-16, but the 4 MSB should never be ones anyway)
+        test2 = buf[(j+1)*3+1+i*(len*adc_chan+2)];
+        test1 = buf[(j+1)*3+i*(len*adc_chan+2)];
         bcm2835_spi_writenb(&buf[(j+1)*3+i*(len*adc_chan+2)], 2);      //2 final bytes for the DAC
+        //Data er ikke lik i buf etter bcm2835_spi_writenb
         counter = counter + 1023;
         if (counter > 4095){   //Make sure it starts over instead of increasing further
             counter = 0;
