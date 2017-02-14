@@ -101,12 +101,12 @@ int main(int argc, char **argv)
         temp = counter;
         test2 = temp & 0x00FF;
         test1 = (temp>>8) & 0x00FF;
-        buf[(j+1)*3+1+i*(len*adc_chan+2)] = temp & 0x00FF;      // Mask out bits 1-8 first, then
-        buf[(j+1)*3+i*(len*adc_chan+2)] = (temp>>8) & 0x00FF;   // Shift right to mask out bits 9-12(9-16, but the 4 MSB should never be ones anyway)
+        buf[(j)*3+1+i*(len*adc_chan+2)] = temp & 0x00FF;      // Mask out bits 1-8 first, then
+        buf[(j)*3+i*(len*adc_chan+2)] = (temp>>8) & 0x00FF;   // Shift right to mask out bits 9-12(9-16, but the 4 MSB should never be ones anyway)
         //Leser verdier før DAC skriving
-        test2 = buf[(j+1)*3+1+i*(len*adc_chan+2)];
-        test1 = buf[(j+1)*3+i*(len*adc_chan+2)];
-        bcm2835_spi_writenb(&buf[(j+1)*3+i*(len*adc_chan+2)], 2);      //2 final bytes for the DAC
+        test2 = buf[(j)*3+1+i*(len*adc_chan+2)];
+        test1 = buf[(j)*3+i*(len*adc_chan+2)];
+        bcm2835_spi_writenb(&buf[(j)*3+i*(len*adc_chan+2)], 2);      //2 final bytes for the DAC
         //Leser verdier etter DAC skriving
         //test4 = buf[(j+1)*3+1+i*(len*adc_chan+2)];
         //test3 = buf[(j+1)*3+i*(len*adc_chan+2)];
