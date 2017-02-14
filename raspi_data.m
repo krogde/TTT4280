@@ -65,26 +65,26 @@ tmRelative = tmRelative*1e-6; % Convert from us to seconds
 % There is something wrong with the DAC Tx data (12 bit out).  The Rx data
 % are more reasonable (10 bit).
 subplot(2,2,1)
-title('Sample data mic')
 plot(tmRelative,sampleData.M1, '-o',tmRelative+9e-6, sampleData.M2, '-o',...
     tmRelative+18e-6, sampleData.M3, '-o');
+title('Sample data mic')
 ylim([0, 1023])
 xlabel('t [s]');
 ylabel('Conversion value');
 subplot(2,2,2)
-title('Sample data radar')
 plot(tmRelative+27e-6, sampleData.Ri, '-o',tmRelative+36e-6, sampleData.Rq, '-o');
+title('Sample data radar')
 ylim([0, 1023])
 xlabel('t [s]');
 ylabel('Conversion value');
 subplot(2,2,3)
-title('DAC')
 plot(tmRelative+45e-6,sampleData.DacRx, '-o',tmRelative+54e-6, sampleData.DacTx, '-o');
+title('DAC')
 ylim([0, 4095])
 xlabel('t [s]');
 ylabel('Conversion value');
 subplot(2,2,4)
-title('T diff')
 plot(sampleData.T_diff, '-o');
+title('T diff')
 xlabel('Sample number');
 ylabel('Time between samples [us]');
