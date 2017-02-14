@@ -70,10 +70,6 @@ int main(int argc, char **argv)
     uint16_t data = 0;                      // 16 bit variable to hold 10 bits of sample data as LSB.
     uint16_t counter = 0;                   // Counter for DAC ramping
     uint16_t temp;
-    char test1;
-    char test2;
-    char test3;
-    char test4;
     uint32_t samples = 1000;                 // Take this many samples before ending
     uint32_t len = 3;                       // We need a buffer of 3 bytes per sample per ADC channel.
     uint32_t adc_chan = 6;                  // We will use six ADC channels, 3x mic, 2x radar, 1x DAC
@@ -99,17 +95,10 @@ int main(int argc, char **argv)
         // Write value to DAC
         bcm2835_spi_chipSelect(BCM2835_SPI_CS0);    // LTC1451. Get ready for setting the DAC
         temp = counter;
-        test2 = temp & 0x00FF;
-        test1 = (temp>>8) & 0x00FF;
+        //j=6, (j+1)->(j)
         buf[(j)*3+1+i*(len*adc_chan+2)] = temp & 0x00FF;      // Mask out bits 1-8 first, then
         buf[(j)*3+i*(len*adc_chan+2)] = (temp>>8) & 0x00FF;   // Shift right to mask out bits 9-12(9-16, but the 4 MSB should never be ones anyway)
-        //Leser verdier før DAC skriving
-        test2 = buf[(j)*3+1+i*(len*adc_chan+2)];
-        test1 = buf[(j)*3+i*(len*adc_chan+2)];
         bcm2835_spi_writenb(&buf[(j)*3+i*(len*adc_chan+2)], 2);      //2 final bytes for the DAC
-        //Leser verdier etter DAC skriving
-        //test4 = buf[(j+1)*3+1+i*(len*adc_chan+2)];
-        //test3 = buf[(j+1)*3+i*(len*adc_chan+2)];
         counter = counter + 1023;
         if (counter > 4095){   //Make sure it starts over instead of increasing further
             counter = 0;
@@ -142,9 +131,8 @@ int main(int argc, char **argv)
         printf("Channel %d: %d | ", j+1, data);
     }
     // Check the last data set on the DAC (should now be converted on the DAC output):
+    //j=6, (j+1)->(j), i=1000, (i+1)->(i)
     printf("\nDAC set = %d | DAC MSB = %d | DAC LSB = %d \n", temp, buf[(j)*3+(i-1)*(len*adc_chan+2)],buf[(j)*3+1+(i-1)*(len*adc_chan+2)]);
-    printf("\nDAC2 set = %d | DAC2 MSB = %d | DAC2 LSB = %d \n", temp, test1,test2);
-    //printf("\nDAC set = %d | DAC MSB = %d | DAC LSB = %d \n", temp, buf[(j+1)*3],buf[(j+1)*3+1]);
     // Print time data/duration (something's not right here...)
     printf("CPU start: %d | CPU end: %d | Total CPU time: %d us\n", start, end, time_diff);
     // Print the last three sample times (something's not right here...)
