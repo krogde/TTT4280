@@ -2,8 +2,8 @@ clearvars; close all;
 %% Open, import and close data files from C on Raspberry Pi
 % Make file IDs
 
-fidTmDf = fopen('C:\Users\Eirik\Documents\GitHub\TTT4280\timeDiff.bin');
-fidSpDt = fopen('C:\Users\Eirik\Documents\GitHub\TTT4280\sampleBuf.bin');
+fidTmDf = fopen('timeDiff.bin');
+fidSpDt = fopen('sampleBuf.bin');
 
 % Read binary data to local variables
 tmSample = fread(fidTmDf);
