@@ -117,8 +117,6 @@ int main(int argc, char **argv)
         bcm2835_spi_chipSelect(BCM2835_SPI_CS1);    // MCP3008. Get ready for sampling again
         //bcm2835_delayMicroseconds(8); //Sleep occasionally so scheduler doesn't penalise us (THIS REQUIRES -lrt ADDING AS A COMPILER FLAG OR IT WILL CAUSE LOCK UP)
     }
-    test4 = buf[(j+1)*3+1+(i-1)*(len*adc_chan+2)];
-    test3 = buf[(j+1)*3+(i-1)*(len*adc_chan+2)];
     // Sampling complete!
     end = bcm2835_st_read();    // Time at end of run
     time_diff = end - start;
@@ -144,9 +142,8 @@ int main(int argc, char **argv)
         printf("Channel %d: %d | ", j+1, data);
     }
     // Check the last data set on the DAC (should now be converted on the DAC output):
-    printf("\nDAC set = %d | DAC MSB = %d | DAC LSB = %d \n", temp, buf[(j+1)*3+(i-1)*(len*adc_chan+2)],buf[(j+1)*3+1+(i-1)*(len*adc_chan+2)]);
+    printf("\nDAC set = %d | DAC MSB = %d | DAC LSB = %d \n", temp, buf[(j)*3+(i-1)*(len*adc_chan+2)],buf[(j)*3+1+(i-1)*(len*adc_chan+2)]);
     printf("\nDAC2 set = %d | DAC2 MSB = %d | DAC2 LSB = %d \n", temp, test1,test2);
-    printf("\nDAC2 set = %d | DAC2 MSB = %d | DAC2 LSB = %d \n", temp, test3,test4);
     //printf("\nDAC set = %d | DAC MSB = %d | DAC LSB = %d \n", temp, buf[(j+1)*3],buf[(j+1)*3+1]);
     // Print time data/duration (something's not right here...)
     printf("CPU start: %d | CPU end: %d | Total CPU time: %d us\n", start, end, time_diff);
