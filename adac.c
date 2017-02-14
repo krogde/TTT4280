@@ -108,9 +108,8 @@ int main(int argc, char **argv)
         test1 = buf[(j+1)*3+i*(len*adc_chan+2)];
         bcm2835_spi_writenb(&buf[(j+1)*3+i*(len*adc_chan+2)], 2);      //2 final bytes for the DAC
         //Leser verdier etter DAC skriving
-        test4 = buf[(j+1)*3+1+i*(len*adc_chan+2)];
-        test3 = buf[(j+1)*3+i*(len*adc_chan+2)];
-        //Data er ikke lik i buf etter bcm2835_spi_writenb
+        //test4 = buf[(j+1)*3+1+i*(len*adc_chan+2)];
+        //test3 = buf[(j+1)*3+i*(len*adc_chan+2)];
         counter = counter + 1023;
         if (counter > 4095){   //Make sure it starts over instead of increasing further
             counter = 0;
@@ -143,6 +142,8 @@ int main(int argc, char **argv)
         // and null out bits 13 to 16 (values larger than 2^10=1023)
         printf("Channel %d: %d | ", j+1, data);
     }
+    test4 = buf[(j+1)*3+1+i*(len*adc_chan+2)];
+    test3 = buf[(j+1)*3+i*(len*adc_chan+2)];
     // Check the last data set on the DAC (should now be converted on the DAC output):
     printf("\nDAC set = %d | DAC MSB = %d | DAC LSB = %d \n", temp, buf[(j+1)*3+i*(len*adc_chan+2)],buf[(j+1)*3+1+i*(len*adc_chan+2)]);
     printf("\nDAC2 set = %d | DAC2 MSB = %d | DAC2 LSB = %d \n", temp, test1,test2);
