@@ -130,7 +130,8 @@ int main(int argc, char **argv)
     fwrite(buf, sizeof(buf[0]), (len*adc_chan+2)*samples, dat);
     fclose(tme);
     fclose(dat);
-
+    test4 = buf[(j+1)*3+1+i*(len*adc_chan+2)];
+    test3 = buf[(j+1)*3+i*(len*adc_chan+2)];
     // Shift ADC bytes, rearrange and print for sanity check (only the first sampling instance)
     // Something seems to be wrong with the DAC data and the time data here.
     printf("| ");
@@ -142,8 +143,6 @@ int main(int argc, char **argv)
         // and null out bits 13 to 16 (values larger than 2^10=1023)
         printf("Channel %d: %d | ", j+1, data);
     }
-    test4 = buf[(j+1)*3+1+i*(len*adc_chan+2)];
-    test3 = buf[(j+1)*3+i*(len*adc_chan+2)];
     // Check the last data set on the DAC (should now be converted on the DAC output):
     printf("\nDAC set = %d | DAC MSB = %d | DAC LSB = %d \n", temp, buf[(j+1)*3+i*(len*adc_chan+2)],buf[(j+1)*3+1+i*(len*adc_chan+2)]);
     printf("\nDAC2 set = %d | DAC2 MSB = %d | DAC2 LSB = %d \n", temp, test1,test2);
