@@ -70,6 +70,8 @@ int main(int argc, char **argv)
     uint16_t data = 0;                      // 16 bit variable to hold 10 bits of sample data as LSB.
     uint16_t counter = 0;                   // Counter for DAC ramping
     uint16_t temp;
+    char test1;
+    char test2;
     uint32_t samples = 1000;                 // Take this many samples before ending
     uint32_t len = 3;                       // We need a buffer of 3 bytes per sample per ADC channel.
     uint32_t adc_chan = 6;                  // We will use six ADC channels, 3x mic, 2x radar, 1x DAC
