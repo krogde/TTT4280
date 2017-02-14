@@ -100,7 +100,9 @@ int main(int argc, char **argv)
         temp = counter;
         temp2 = counter;
         test1 = temp & 0x00FF;
+        temp = counter;
         test2 = (temp>>8) & 0x00FF;
+        temp = counter;
         buf[(j+1)*3+1+i*(len*adc_chan+2)] = temp & 0x00FF;      // Mask out bits 1-8 first, then
         buf[(j+1)*3+i*(len*adc_chan+2)] = (temp>>8) & 0x00FF;   // Shift right to mask out bits 9-12(9-16, but the 4 MSB should never be ones anyway)
         bcm2835_spi_writenb(&buf[(j+1)*3+i*(len*adc_chan+2)], 2);      //2 final bytes for the DAC
@@ -141,6 +143,7 @@ int main(int argc, char **argv)
     }
     // Check the last data set on the DAC (should now be converted on the DAC output):
     printf("\nDAC set = %d | DAC MSB = %d | DAC LSB = %d \n", temp, buf[(j+1)*3+i*(len*adc_chan+2)],buf[(j+1)*3+1+i*(len*adc_chan+2)]);
+    printf("\nDAC2 set = %d | DAC2 MSB = %d | DAC2 LSB = %d \n", temp2, test1,test2);
     //printf("\nDAC set = %d | DAC MSB = %d | DAC LSB = %d \n", temp, buf[(j+1)*3],buf[(j+1)*3+1]);
     // Print time data/duration (something's not right here...)
     printf("CPU start: %d | CPU end: %d | Total CPU time: %d us\n", start, end, time_diff);
