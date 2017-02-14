@@ -70,6 +70,7 @@ int main(int argc, char **argv)
     uint16_t data = 0;                      // 16 bit variable to hold 10 bits of sample data as LSB.
     uint16_t counter = 0;                   // Counter for DAC ramping
     uint16_t temp;
+    uint16_t temp2;
     char test1;
     char test2;
     uint32_t samples = 1000;                 // Take this many samples before ending
