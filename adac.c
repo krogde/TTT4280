@@ -117,6 +117,8 @@ int main(int argc, char **argv)
         bcm2835_spi_chipSelect(BCM2835_SPI_CS1);    // MCP3008. Get ready for sampling again
         //bcm2835_delayMicroseconds(8); //Sleep occasionally so scheduler doesn't penalise us (THIS REQUIRES -lrt ADDING AS A COMPILER FLAG OR IT WILL CAUSE LOCK UP)
     }
+    test4 = buf[(j+1)*3+1+i*(len*adc_chan+2)];
+    test3 = buf[(j+1)*3+i*(len*adc_chan+2)];
     // Sampling complete!
     end = bcm2835_st_read();    // Time at end of run
     time_diff = end - start;
@@ -130,8 +132,6 @@ int main(int argc, char **argv)
     fwrite(buf, sizeof(buf[0]), (len*adc_chan+2)*samples, dat);
     fclose(tme);
     fclose(dat);
-    test4 = buf[(j+1)*3+1+i*(len*adc_chan+2)];
-    test3 = buf[(j+1)*3+i*(len*adc_chan+2)];
     // Shift ADC bytes, rearrange and print for sanity check (only the first sampling instance)
     // Something seems to be wrong with the DAC data and the time data here.
     printf("| ");
