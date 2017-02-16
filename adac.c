@@ -5,6 +5,7 @@
 //  Created by Kristoffer Kjærnes on 24.01.2017.
 //  Strongly inspired by examples from Mike McCauley, author of the bcm2835 library
 //
+// library documentation on http://www.airspayce.com/mikem/bcm2835/modules.html
 //
 // After installing bcm2835, you can build this
 // with something like:
@@ -16,6 +17,7 @@
 #include <bcm2835.h>
 #include <stdio.h>
 #include <time.h>
+
 
 // Main program
 int main(int argc, char **argv)
@@ -44,8 +46,9 @@ int main(int argc, char **argv)
     // In other words, the clock speed will be 250MHz/2*n, where n is any integer from 1 to 32768.
     //bcm2835_spi_setClockDivider(12);                                // Max speed for IO-lines when looped back
     //bcm2835_spi_setClockDivider(32768);                             // Testspeed for setup; 7.63kHz
-    //bcm2835_spi_setClockDivider(32);                                // Max speed for setup; 7.8125MHz!!!
-    bcm2835_spi_setClockDivider(500);                                // Current clock freq: 250MHz/divider.
+    //bcm2835_spi_setClockDivider(32);                                // Max speed for setup; 7.8125MHz!!! But
+                                                                      // this gives faulty conversions
+    bcm2835_spi_setClockDivider(70);                                // Current clock freq: 250MHz/divider.
     //bcm2835_spi_setClockDivider(70);                                // 3.57MHz = 250MHz/70.
     //bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                        // LTC1451
     //bcm2835_spi_chipSelect(BCM2835_SPI_CS1);                        // MCP3008
@@ -64,82 +67,90 @@ int main(int argc, char **argv)
     // uint8_t ch7 = 0xE0; //0b1110 0000; 0xE0 for 4 MSB first, then 4 LSB don't care
     // uint8_t ch8 = 0xF0; //0b1111 0000; 0xF0 for 4 MSB first, then 4 LSB don't care
     
-    uint8_t start_byte = 1; //0b00000001; 7 leading zeros followed by the start bit
+    uint8_t start_byte = 1; //0b00000001; 7 leading zeros followed by the start bit to initiate ADC session
     uint8_t read_MSB;
     uint8_t read_LSB;
     uint16_t data = 0;                      // 16 bit variable to hold 10 bits of sample data as LSB.
     uint16_t counter = 0;                   // Counter for DAC ramping
-    uint16_t temp;
-    uint32_t samples = 1000;                 // Take this many samples before ending
-    uint32_t len = 3;                       // We need a buffer of 3 bytes per sample per ADC channel.
-    uint32_t adc_chan = 6;                  // We will use six ADC channels, 3x mic, 2x radar, 1x DAC
-    char buf[(len*adc_chan+2)*samples];     // Allocate a data buffer of length len*adc_chan+(2 DAC-bytes)
-    uint64_t timeBuf[samples];              // Allocate a time buffer to hold the system time of successive
+    uint16_t temp;                          // Temporary variable to hold DAC output value
+    uint32_t samples = 10000;               // Take this many samples before ending
+    uint32_t adcLen = 3;                    // We need a buffer of 3 bytes per sample per ADC channel.
+    uint32_t dacLen = 2;                    // We need a buffer of 2 bytes per DAC sequence.
+    uint32_t adc_chan = 6;                  // We will use 6 ADC channels, 3x mic, 2x radar, 1x DAC
+    char adcBuf[adcLen*adc_chan*samples];   // Allocate a data buffer of length adcLen*adc_chan for each ADC sampling
+    char dacBuf[dacLen*samples];            // Allocate a data buffer of length dacLen for each DAC output
+    uint64_t adcTimeBuf[adc_chan*samples];  // Allocate a time buffer to hold the system time of successive
                                             // sampling sequences.
-    uint64_t start, end, time_diff;         // 64 bit integers to hold the system start and end time
-    start = bcm2835_st_read();              // bcm2835_st_read() uses a 1MHz system clock to keep track of time
-                                            // Thus, we will know with +- 1us accuracy, the time difference between
-                                            // one sample and the next.
+    uint64_t dacTimeBuf[samples];           // Allocate a time buffer to hold the system time of successive
+                                            // DAC output sequences
+    // The function bcm2835_st_read() uses a 1MHz system clock to keep track of time. Thus, we will know 
+    // with +- 1us accuracy, the time difference between one sample and the next.
     
     // Start taking data
     bcm2835_spi_chipSelect(BCM2835_SPI_CS1);    // MCP3008. Get ready for sampling
     for (i=0;i<samples;i++){
-        timeBuf[i] = bcm2835_st_read();             //Write time of sampling to time buffer.
         // Sample channel 1-6 in sequence. Can reduce number of channels if wanted.
-        for (j=0;j<6;j++){
-            buf[j*3+i*(len*adc_chan+2)] = start_byte;        // Initiate communication/sampling
-            buf[j*3+1+i*(len*adc_chan+2)] = ch1 + j*0x10;    // Need to pass the ADC setup bits MSB first. 4 LSB of buf[1] is don't care.
-            bcm2835_spi_transfern(&buf[j*3+i*(len*adc_chan+2)], len);   //transfern transfers len bytes to the
-            // ADC as written in buf, and simultanously writes the converted data over
+        for (j=0;j<adc_chan;j++){
+            adcBuf[j*3+i*(adcLen*adc_chan)] = start_byte;       // Byte to initiate communication/sampling
+            adcBuf[j*3+1+i*(adcLen*adc_chan)] = ch1 + j*0x10;   // Need to pass the ADC setup bits MSB first. 4 LSB of buf[] is don't care.
+            adcTimeBuf[i*adc_chan+j] = bcm2835_st_read();       // System time prior to ADC sampling, write to ADC time buffer.
+            bcm2835_spi_transfern(&adcBuf[j*3+i*(adcLen*adc_chan)], adcLen);   //transfern(...) transfers adcLen bytes to the
+            // ADC as stored in adcBuf, and subsequently writes the converted data to the same indices in adcBuf
         }
         // Write value to DAC
         bcm2835_spi_chipSelect(BCM2835_SPI_CS0);    // LTC1451. Get ready for setting the DAC
-        temp = counter;
-        //j=6, (j+1)->(j)
-        buf[(j)*3+1+i*(len*adc_chan+2)] = temp & 0x00FF;      // Mask out bits 1-8 first, then
-        buf[(j)*3+i*(len*adc_chan+2)] = (temp>>8) & 0x00FF;   // Shift right to mask out bits 9-12(9-16, but the 4 MSB should never be ones anyway)
-        bcm2835_spi_writenb(&buf[(j)*3+i*(len*adc_chan+2)], 2);      //2 final bytes for the DAC
-        counter = counter + 1023;
-        if (counter > 4095){   //Make sure it starts over instead of increasing further
+        temp = counter;                                     // Update temp variable with new output value
+        dacBuf[i*dacLen+1] = temp & 0x00FF;         // Mask out bits 1-8 first, then
+        dacBuf[i*dacLen] = (temp>>8) & 0x00FF;      // Shift right to mask out bits 9-12(9-16, but the 4 MSB should never be ones anyway)
+        dacTimeBuf[i] = bcm2835_st_read();          // System time prior to DAC output sequence, write to DAC time buffer.
+        bcm2835_spi_writenb(&dacBuf[i*dacLen], dacLen);// Send bytes to the DAC for output conversion
+        // Generate a sawtooth signal for the DAC
+        counter = counter + 15;
+        if (counter > 4095){   //Make sure it starts over instead of increasing further. The DAC is 12 bits only remember (2^12=4096)
             counter = 0;
         }
-        bcm2835_spi_chipSelect(BCM2835_SPI_CS1);    // MCP3008. Get ready for sampling again
-        //bcm2835_delayMicroseconds(8); //Sleep occasionally so scheduler doesn't penalise us (THIS REQUIRES -lrt ADDING AS A COMPILER FLAG OR IT WILL CAUSE LOCK UP)
+        bcm2835_spi_chipSelect(BCM2835_SPI_CS1);    // MCP3008. Get ready for ADC sampling again
+        //bcm2835_delayMicroseconds(38); //Sleep periodically so scheduler doesn't penalise us (THIS REQUIRES -lrt ADDING AS A COMPILER FLAG OR IT WILL CAUSE LOCK UP)
     }
-    // Sampling complete!
-    end = bcm2835_st_read();    // Time at end of run
-    time_diff = end - start;
     
     // Write data to files
-    FILE *tme;
-    FILE *dat;
-    tme = fopen("timeDiff.bin", "wb+");
-    dat = fopen("sampleBuf.bin", "wb+");
-    fwrite(timeBuf, sizeof(timeBuf[0]), samples, tme);
-    fwrite(buf, sizeof(buf[0]), (len*adc_chan+2)*samples, dat);
-    fclose(tme);
-    fclose(dat);
+    FILE *adcTm;
+    FILE *adcDat;
+    FILE *dacTm;
+    FILE *dacDat;
+    /////////// Update this info with the correct path to your data directory ///////////
+    adcTm = fopen("/mnt/home/raspi/c-code/data/adcTiming.bin", "wb+"); // wb+ means write, binary, overwrite if existing
+    adcDat = fopen("/mnt/home/raspi/c-code/data/adcData.bin", "wb+");
+    dacTm = fopen("/mnt/home/raspi/c-code/data/dacTiming.bin", "wb+");
+    dacDat = fopen("/mnt/home/raspi/c-code/data/dacData.bin", "wb+");
+    fwrite(adcTimeBuf, sizeof(adcTimeBuf[0]), adc_chan*samples, adcTm);
+    fwrite(adcBuf, sizeof(adcBuf[0]), adcLen*adc_chan*samples, adcDat);
+    fwrite(dacTimeBuf, sizeof(dacTimeBuf[0]), samples, dacTm);
+    fwrite(dacBuf, sizeof(adcBuf[0]), dacLen*samples, dacDat);
+    fclose(adcTm);
+    fclose(adcDat);
+    fclose(dacTm);
+    fclose(dacDat);
+    
+
     // Shift ADC bytes, rearrange and print for sanity check (only the first sampling instance)
-    // Something seems to be wrong with the DAC data and the time data here.
+    printf("First sample conversion from ADC channels 1-6 (or 0-5 ref datasheet):\n");
     printf("| ");
-    for (j=0;j<6;j++){
-        read_MSB = buf[j*3+1];
-        read_LSB = buf[j*3+2];
+    for (j=0;j<adc_chan;j++){
+        read_MSB = adcBuf[j*3+1];
+        read_LSB = adcBuf[j*3+2];
         // Bit shift operations
         data = ((read_MSB<<8) | read_LSB) & 1023;   // Shift MSB byte 8 bits to the left, put it together with the 8 LSB
-        // and null out bits 13 to 16 (values larger than 2^10=1023)
+        // and cancel out bits 11 to 16 (values larger than [2^10 - 1]=1023)
         printf("Channel %d: %d | ", j+1, data);
     }
     // Check the last data set on the DAC (should now be converted on the DAC output):
-    //j=6, (j+1)->(j), i=1000, (i+1)->(i)
-    printf("\nDAC set = %d | DAC MSB = %d | DAC LSB = %d \n", temp, buf[(j)*3+(i-1)*(len*adc_chan+2)],buf[(j)*3+1+(i-1)*(len*adc_chan+2)]);
-    // Print time data/duration (something's not right here...)
-    printf("CPU start: %d | CPU end: %d | Total CPU time: %d us\n", start, end, time_diff);
-    // Print the last three sample times (something's not right here...)
-    printf("Time buffer last three samples: %d, %d, %d\n", timeBuf[i-2], timeBuf[i-1], timeBuf[i]);
+    printf("\nFinal (last) DAC output value:\n");
+    printf("DAC set value = %d | DAC most significant byte = %d | DAC least significant byte = %d \n", temp, dacBuf[(i-1)*dacLen],dacBuf[(i-1)*dacLen+1]);
     
     // End SPI, clean up and terminate the bcm2835 driver
     bcm2835_spi_end();
     bcm2835_close();
+    printf("Program ended successfully\n");
     return 0;
 }
