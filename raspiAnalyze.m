@@ -25,19 +25,8 @@ clearvars; close all;
 %%%%% IMPORTANT %%%%%
 % BE SURE TO HAVE THE FINAL SLASH PRESENT IN THE PATH
 %%%%% IMPORTANT END %%%%%
-if ismac
-    % Code to run on Mac platform
-    path = 'path-to-data-directory-on-Mac-system/';
-elseif isunix
-    % Code to run on Linux platform
-    path = 'path-to-data-directory-on-Linux-system/';
-elseif ispc
-    % Code to run on Windows platform
-    path = 'path-to-data-directory-on-Windows-system\';
-else
-    error('Platform not supported!')
-    % Function terminates
-end
+
+path = '';
 
 % Run function to import all data and timestamps from the files. It only
 % cares that four data files with specified names exist in the path 
@@ -53,23 +42,6 @@ end
 %
 % If you want to do different things, just comment out, change or delete
 % the rest of the script.
-
-if channels == 6
-    % continue, but place a warning just to make it clear
-    warning(strcat('The structs and plots are only meaningful if ',...
-        'you connected everything according to the block diagram in ',...
-        'the labmanual'));
-elseif channels < 6
-    % end script here as it will crash anyway
-    error(strcat('Script is not prepared for less than 6 ADC channels.',...
-        ' Script terminated.',' All data is still stored in the',...
-        ' raw variables.'));
-else
-    % continue with warning
-    warning(strcat('Your last ADC channel(s) data and timestamps are',...
-        ' only stored in the raw variables. Update the structs if',...
-        ' you want them there too.'));
-end
 
 % Generate structs
 allData = struct(...    % Organize all numerical data, 10 bit ADC, 12 bit DAC output
@@ -94,31 +66,34 @@ allTimes = struct(...   % Organize all timestamps accordingly, unit is us
 
 %% Plot all translated data with its respective timestamp
 % Plot all microphone signals (or ADC channels 1, 2, 3)
-fhMics = figure;
+subplot(2,2,1);
 plot(allTimes.Mic1*1e-6 ,allData.Mic1, '-o',...
     allTimes.Mic2*1e-6 ,allData.Mic2, '-o',...
     allTimes.Mic3*1e-6 ,allData.Mic3, '-o'...
     );
+title('Mic data');
 ylim([0, 1023]) % 10 bit ADC gives only values 0-1023
 xlabel('t [s]');
 ylabel('Conversion value');
 legend('Mic1','Mic2','Mic3');
 
 % Plot radar signals
-fhRadar = figure;
+subplot(2,2,2);
 plot(allTimes.RadarIF_I*1e-6 ,allData.RadarIF_I, '-o',...
     allTimes.RadarIF_Q*1e-6 ,allData.RadarIF_Q, '-o'...
     );
+title('Radar data');
 ylim([0, 1023]) % 10 bit ADC gives only values 0-1023
 xlabel('t [s]');
 ylabel('Conversion value');
 legend('Radar in-phase','Radar quadrature');
 
 % Plot DAC signal sampled back and output requested.
-fhDAC = figure;
+subplot(2,2,3);
 plot(allTimes.DAC_Sampled*1e-6 ,allData.DAC_Sampled, '-o',...
     allTimes.DAC_Output*1e-6 ,allData.DAC_Output, '-o'...
     );
+title('DAC send/recived')
 ylim([0, 4095]) % 12 bit DAC gives only values 0-4095. Note that the 
 % sampled DAC signal will be in the ADC range 0-1023.
 xlabel('t [s]');
@@ -129,8 +104,9 @@ legend('DAC sampled in','DAC requested output');
 % data column as an example. This info tells you the nominal sample period 
 % for the system, and clearly reveals where the linux scheduler has halted
 % our program. 
-fhTiming = figure;
+subplot(2,2,4);
 plot(diff(allTimes.Mic1), '-o');
+title('Time diff between samples')
 xlabel('Sample number');
 ylabel('Time between samples [us]');
 legend('ADC channel 1 (0 in datasheet)');

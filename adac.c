@@ -48,8 +48,7 @@ int main(int argc, char **argv)
     //bcm2835_spi_setClockDivider(32768);                             // Testspeed for setup; 7.63kHz
     //bcm2835_spi_setClockDivider(32);                                // Max speed for setup; 7.8125MHz!!! But
                                                                       // this gives faulty conversions
-    bcm2835_spi_setClockDivider(70);                                // Current clock freq: 250MHz/divider.
-    //bcm2835_spi_setClockDivider(70);                                // 3.57MHz = 250MHz/70.
+    bcm2835_spi_setClockDivider(70);                                // Current clock freq: 250MHz/divider..
     //bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                        // LTC1451
     //bcm2835_spi_chipSelect(BCM2835_SPI_CS1);                        // MCP3008
     bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);        // the default
@@ -59,13 +58,6 @@ int main(int argc, char **argv)
     int j;
     // Assign correct bit masks for the ADC channel mux. Need to send in units of bytes, e.g init should be 4MSB.
     uint8_t ch1 = 0x80; //0b1000 0000; 0x80 for 4 MSB first, then 4 LSB don't care
-    // uint8_t ch2 = 0x90; //0b1001 0000; 0x90 for 4 MSB first, then 4 LSB don't care
-    // uint8_t ch3 = 0xA0; //0b1010 0000; 0xA0 for 4 MSB first, then 4 LSB don't care
-    // uint8_t ch4 = 0xB0; //0b1011 0000; 0xB0 for 4 MSB first, then 4 LSB don't care
-    // uint8_t ch5 = 0xC0; //0b1100 0000; 0xC0 for 4 MSB first, then 4 LSB don't care
-    // uint8_t ch6 = 0xD0; //0b1101 0000; 0xD0 for 4 MSB first, then 4 LSB don't care
-    // uint8_t ch7 = 0xE0; //0b1110 0000; 0xE0 for 4 MSB first, then 4 LSB don't care
-    // uint8_t ch8 = 0xF0; //0b1111 0000; 0xF0 for 4 MSB first, then 4 LSB don't care
     
     uint8_t start_byte = 1; //0b00000001; 7 leading zeros followed by the start bit to initiate ADC session
     uint8_t read_MSB;
