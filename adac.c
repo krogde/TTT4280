@@ -122,7 +122,7 @@ int main(int argc, char **argv)
     adcTm = fopen("adcTiming.bin", "wb+"); // wb+ means write, binary, overwrite if existing
     adcDat = fopen("adcData.bin", "wb+");
     dacTm = fopen("dacTiming.bin", "wb+");
-    dacDat = fopen("data/dacData.bin", "wb+");
+    dacDat = fopen("dacData.bin", "wb+");
     fwrite(adcTimeBuf, sizeof(adcTimeBuf[0]), adc_chan*samples, adcTm);
     fwrite(adcBuf, sizeof(adcBuf[0]), adcLen*adc_chan*samples, adcDat);
     fwrite(dacTimeBuf, sizeof(dacTimeBuf[0]), samples, dacTm);
