@@ -119,10 +119,10 @@ int main(int argc, char **argv)
     FILE *dacTm;
     FILE *dacDat;
     /////////// Update this info with the correct path to your data directory ///////////
-    adcTm = fopen("/mnt/home/raspi/c-code/data/adcTiming.bin", "wb+"); // wb+ means write, binary, overwrite if existing
-    adcDat = fopen("/mnt/home/raspi/c-code/data/adcData.bin", "wb+");
-    dacTm = fopen("/mnt/home/raspi/c-code/data/dacTiming.bin", "wb+");
-    dacDat = fopen("/mnt/home/raspi/c-code/data/dacData.bin", "wb+");
+    adcTm = fopen("adcTiming.bin", "wb+"); // wb+ means write, binary, overwrite if existing
+    adcDat = fopen("adcData.bin", "wb+");
+    dacTm = fopen("dacTiming.bin", "wb+");
+    dacDat = fopen("data/dacData.bin", "wb+");
     fwrite(adcTimeBuf, sizeof(adcTimeBuf[0]), adc_chan*samples, adcTm);
     fwrite(adcBuf, sizeof(adcBuf[0]), adcLen*adc_chan*samples, adcDat);
     fwrite(dacTimeBuf, sizeof(dacTimeBuf[0]), samples, dacTm);
