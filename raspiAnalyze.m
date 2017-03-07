@@ -45,9 +45,9 @@ path = '';
 
 % Generate structs
 allData = struct(...    % Organize all numerical data, 10 bit ADC, 12 bit DAC output
-    'Mic1',rawData(:,3),... % Changing to 3 because of posistion
+    'Mic1',rawData(:,1),... 
     'Mic2',rawData(:,2),...
-    'Mic3',rawData(:,1),... % Changing to 1 because of posistion
+    'Mic3',rawData(:,3),... 
     'RadarIF_I',rawData(:,4),...    % In-phase signal
     'RadarIF_Q',rawData(:,5),...    % Quadrature signal
     'DAC_Sampled',rawData(:,6),...  % DAC signal sampled back with ADC
@@ -126,16 +126,16 @@ ylabel('Conversion/set value');
 legend('DAC sampled in','DAC requested output');
 
 % Calculating correlations
-a = 0.02; %Distance between mics
+a = 0.12; %Distance between mics
 cair = 343;
-delay = 10*10^-6; %delay between the different mics
+delay = 7*10^-6; %delay between the different mics
 tmax = a/cair + delay; %Max time between mics
-Ts = 60*10^-6; %Time between samples
+Ts = 40*10^-6; %Time between samples
 nmax = tmax/Ts; %Max number of samples between mics
 
-sig1 = upsample(allData.Mic1,10);
-sig2 = upsample(allData.Mic2,10);
-sig3 = upsample(allData.Mic3,10);
+sig1 = upsample(allData.Mic1,100);
+sig2 = upsample(allData.Mic2,100);
+sig3 = upsample(allData.Mic3,100);
 
 [c21,lags] = xcorr(sig2,sig1);
 [temp,iv] = max(c21);
