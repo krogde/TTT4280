@@ -45,9 +45,9 @@ path = '';
 
 % Generate structs
 allData = struct(...    % Organize all numerical data, 10 bit ADC, 12 bit DAC output
-    'Mic1',rawData(:,1),...
+    'Mic1',rawData(:,3),... % Changing to 3 because of posistion
     'Mic2',rawData(:,2),...
-    'Mic3',rawData(:,3),...
+    'Mic3',rawData(:,1),... % Changing to 1 because of posistion
     'RadarIF_I',rawData(:,4),...    % In-phase signal
     'RadarIF_Q',rawData(:,5),...    % Quadrature signal
     'DAC_Sampled',rawData(:,6),...  % DAC signal sampled back with ADC
@@ -66,10 +66,10 @@ allTimes = struct(...   % Organize all timestamps accordingly, unit is us
 
 % Setting all data with to long time diff to zero
 % Using 60 as max time between samples
-%MaxTimeDiff = 60;
-%allData.Mic1([999; diff(allTimes.Mic1)] > MaxTimeDiff) = 0;
-%allData.Mic2([999; diff(allTimes.Mic2)] > MaxTimeDiff) = 0;
-%allData.Mic3([999; diff(allTimes.Mic3)] > MaxTimeDiff) = 0;
+MaxTimeDiff = 70;
+allData.Mic1([999; diff(allTimes.Mic1)] > MaxTimeDiff) = 0;
+allData.Mic2([999; diff(allTimes.Mic2)] > MaxTimeDiff) = 0;
+allData.Mic3([999; diff(allTimes.Mic3)] > MaxTimeDiff) = 0;
 
 %% Plot all translated data with its respective timestamp
 % Plot all microphone signals (or ADC channels 1, 2, 3)
@@ -126,7 +126,7 @@ ylabel('Conversion/set value');
 legend('DAC sampled in','DAC requested output');
 
 % Calculating correlations
-a = 0.03; %Distance between mics
+a = 0.02; %Distance between mics
 cair = 343;
 delay = 10*10^-6; %delay between the different mics
 tmax = a/cair + delay; %Max time between mics

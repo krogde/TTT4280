@@ -29,7 +29,7 @@ http://www.cprogramming.com/ and/or http://www.cplusplus.com/
 #include <time.h>
 #include <math.h>
 
-#define CLK_DIVIDER 112     // Defines SPI clock freq from GPU core clock/divider, e.g. 400 MHz / CLK_DIVIDER
+#define CLK_DIVIDER 66     // Defines SPI clock freq from GPU core clock/divider, e.g. 400 MHz / CLK_DIVIDER
 #define PI 3.14159265
 
 /* Define global variables */
