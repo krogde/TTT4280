@@ -66,7 +66,7 @@ allTimes = struct(...   % Organize all timestamps accordingly, unit is us
 
 % Setting all data with to long time diff to zero
 % Using 60 as max time between samples
-MaxTimeDiff = 70;
+MaxTimeDiff = 50;
 allData.Mic1([999; diff(allTimes.Mic1)] > MaxTimeDiff) = 0;
 allData.Mic2([999; diff(allTimes.Mic2)] > MaxTimeDiff) = 0;
 allData.Mic3([999; diff(allTimes.Mic3)] > MaxTimeDiff) = 0;
@@ -133,15 +133,19 @@ tmax = a/cair + delay; %Max time between mics
 Ts = 60*10^-6; %Time between samples
 nmax = tmax/Ts; %Max number of samples between mics
 
-[c21,lags] = xcorr(allData.Mic2,allData.Mic1);
+sig1 = upsample(allData.Mic1,10);
+sig2 = upsample(allData.Mic2,10);
+sig3 = upsample(allData.Mic3,10);
+
+[c21,lags] = xcorr(sig2,sig1);
 [temp,iv] = max(c21);
 t21 = lags(iv);
 
-[c31,lags] = xcorr(allData.Mic3,allData.Mic1);
+[c31,lags] = xcorr(sig3,sig1);
 [temp,iv] = max(c31);
 t31 = lags(iv);
 
-[c32,lags] = xcorr(allData.Mic3,allData.Mic2);
+[c32,lags] = xcorr(sig3,sig2);
 [temp,iv] = max(c32);
 t32 = lags(iv);
 
