@@ -73,7 +73,14 @@ allTimes = struct(...   % Organize all timestamps accordingly, unit is us
 
 %% Plot all translated data with its respective timestamp
 % Plot all microphone signals (or ADC channels 1, 2, 3)
-subplot(2,2,1);
+figure(1);
+subplot(2,1,1);
+%Plot to see the connection between large time diff and weird sample data
+%n = 1:1:10000;
+%plot(n,allData.Mic1, '-o',...
+%    n,allData.Mic2, '-o',...
+%    n,allData.Mic3, '-o'...
+%    );
 plot(allTimes.Mic1*1e-6 ,allData.Mic1, '-o',...
     allTimes.Mic2*1e-6 ,allData.Mic2, '-o',...
     allTimes.Mic3*1e-6 ,allData.Mic3, '-o'...
@@ -84,8 +91,19 @@ xlabel('t [s]');
 ylabel('Conversion value');
 legend('Mic1','Mic2','Mic3');
 
+% Plot time difference between successive samples. We here use the first
+% data column as an example. This info tells you the nominal sample period 
+% for the system, and clearly reveals where the linux scheduler has halted
+% our program. 
+subplot(2,1,2);
+plot(diff(allTimes.Mic1), '-o');
+title('Time diff between samples')
+xlabel('Sample number');
+ylabel('Time between samples [us]');
+legend('ADC channel 1 (0 in datasheet)');
+
 % Plot radar signals
-subplot(2,2,2);
+figure(2);
 plot(allTimes.RadarIF_I*1e-6 ,allData.RadarIF_I, '-o',...
     allTimes.RadarIF_Q*1e-6 ,allData.RadarIF_Q, '-o'...
     );
@@ -96,7 +114,7 @@ ylabel('Conversion value');
 legend('Radar in-phase','Radar quadrature');
 
 % Plot DAC signal sampled back and output requested.
-subplot(2,2,3);
+figure(3);
 plot(allTimes.DAC_Sampled*1e-6 ,allData.DAC_Sampled, '-o',...
     allTimes.DAC_Output*1e-6 ,allData.DAC_Output, '-o'...
     );
@@ -106,17 +124,6 @@ ylim([0, 4095]) % 12 bit DAC gives only values 0-4095. Note that the
 xlabel('t [s]');
 ylabel('Conversion/set value');
 legend('DAC sampled in','DAC requested output');
-
-% Plot time difference between successive samples. We here use the first
-% data column as an example. This info tells you the nominal sample period 
-% for the system, and clearly reveals where the linux scheduler has halted
-% our program. 
-subplot(2,2,4);
-plot(diff(allTimes.Mic1), '-o');
-title('Time diff between samples')
-xlabel('Sample number');
-ylabel('Time between samples [us]');
-legend('ADC channel 1 (0 in datasheet)');
 
 % Calculating correlations
 a = 0.03; %Distance between mics
