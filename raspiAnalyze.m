@@ -64,6 +64,12 @@ allTimes = struct(...   % Organize all timestamps accordingly, unit is us
     'DAC_Output',rawTimes(:,end)...
     );
 
+% Setting all data with to long time diff to zero
+% Using 60 as max time between samples
+%allData.Mic1([0; diff(allTimes.Mic1)] > 60) = 0;
+%allData.Mic2([0; diff(allTimes.Mic2)] > 60) = 0;
+%allData.Mic3([0; diff(allTimes.Mic3)] > 60) = 0;
+
 %% Plot all translated data with its respective timestamp
 % Plot all microphone signals (or ADC channels 1, 2, 3)
 subplot(2,2,1);
@@ -110,3 +116,29 @@ title('Time diff between samples')
 xlabel('Sample number');
 ylabel('Time between samples [us]');
 legend('ADC channel 1 (0 in datasheet)');
+
+% Calculating correlations
+a = 0.03; %Distance between mics
+cair = 343;
+delay = 10*10^-6; %delay between the different mics
+tmax = a/cair + delay; %Max time between mics
+Ts = 60*10^-6; %Time between samples
+nmax = tmax/Ts; %Max number of samples between mics
+
+[c21,lags] = xcorr(allData.Mic2,allData.Mic1);
+[temp,iv] = max(c21);
+t21 = lags(iv);
+
+[c31,lags] = xcorr(allData.Mic3,allData.Mic1);
+[temp,iv] = max(c31);
+t31 = lags(iv);
+
+[c32,lags] = xcorr(allData.Mic3,allData.Mic2);
+[temp,iv] = max(c32);
+t32 = lags(iv);
+
+% Calculate estimated angles
+innerfunc = sqrt(3)*(t21+t31)/(t21-t31-2*t32);
+thetavec = atan(innerfunc);
+
+

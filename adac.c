@@ -29,6 +29,7 @@ http://www.cprogramming.com/ and/or http://www.cplusplus.com/
 #include <time.h>
 #include <math.h>
 
+#define CLK_DIVIDER 112     // Defines SPI clock freq from GPU core clock/divider, e.g. 400 MHz / CLK_DIVIDER
 #define PI 3.14159265
 
 /* Define global variables */
@@ -72,6 +73,8 @@ int main(int argc, char **argv){
 
     /* Assign dummy/helper variables */
     int i, j;
+    double clockDivider = CLK_DIVIDER;  // SPI clock divider
+    double spiClock = 400/clockDivider; // Current SPI clock frequency given GPU core clock is 400 MHz.
     uint16_t data = 0;    // 16 bit variable to hold 10 bits of ADC sample data as LSB.
     uint8_t read_MSB;     // 8 bit variable for 8 MSB
     uint8_t read_LSB;     // 8 bit variable for 8 LSB
@@ -90,6 +93,9 @@ int main(int argc, char **argv){
     /* Activate the SPI user-defined settings */
     spiSetup();
     printf("Successfully initialized and started SPI. ADC and DAC are now running...\n");
+    printf("SPI clock divider is now %d. Assuming your GPU core clock is 400 MHz,\n",CLK_DIVIDER);
+    printf("the current SPI clock frequency is %f MHz.\n",spiClock);
+    printf("Check GPU core clock with the linux command: vcgencmd measure_clock core\n");
 
     /* Start running the ADC and DAC */
     for (i = 0; i < samples; i++){
@@ -174,15 +180,19 @@ int main(int argc, char **argv){
 /* Set up the SPI parameters */
 void spiSetup(){
     /* SPI clock frequency setup */ /* 
+    We now assume that the raspi is running with force_turbo=1 in the /boot/config.txt file. See 
+    details in the labmanual Part III for ADC/DAC setup for info on this. CLK_DIVIDER is defined
+    and can be changed at the top of this file after the include-files.
+    It means that all core frequencies are set to their nominal max value, i.e 400 MHz for the 
+    GPU core clock which the bcm2835 C-lib divides the SPI frequency from.
     Selects from power-of-2 enumerator, but the datasheet is wrong. You can use whatever multiple 
     of 2 in [2^1,2^16]. E.g not limited to powers of 2! In other words, the clock speed will be 
-    250MHz/2*n, where n is any integer from 1 to 32768. */
+    400MHz/2*n, where n is any integer from 1 to 32768. */
     //bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_65536);   // The default.
-    //bcm2835_spi_setClockDivider(12);                                // Max speed for IO-lines when looped back
-    //bcm2835_spi_setClockDivider(32768);                             // Testspeed for setup; 7.63kHz
-    //bcm2835_spi_setClockDivider(32);                                // Max speed for setup; 7.8125MHz!!! But this gives faulty conversions
-    //bcm2835_spi_setClockDivider(70);                                // 3.57MHz = 250MHz/70.
-    bcm2835_spi_setClockDivider(70); // Current clock freq: 250MHz/divider.
+    //bcm2835_spi_setClockDivider(18);                                // Max speed for IO-lines when looped back
+    //bcm2835_spi_setClockDivider(32768);                             // Testspeed for setup
+    //bcm2835_spi_setClockDivider(112);                                // 3.57MHz = 400MHz/112.
+    bcm2835_spi_setClockDivider(CLK_DIVIDER); // Current clock freq: 400MHz/CLK_DIVIDER.
 
     /* SPI bit order setup */                                /*
     Most vs least significant bit first (MSB vs LSB) */
