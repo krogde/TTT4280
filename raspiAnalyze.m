@@ -66,9 +66,10 @@ allTimes = struct(...   % Organize all timestamps accordingly, unit is us
 
 % Setting all data with to long time diff to zero
 % Using 60 as max time between samples
-%allData.Mic1([0; diff(allTimes.Mic1)] > 60) = 0;
-%allData.Mic2([0; diff(allTimes.Mic2)] > 60) = 0;
-%allData.Mic3([0; diff(allTimes.Mic3)] > 60) = 0;
+%MaxTimeDiff = 60;
+%allData.Mic1([999; diff(allTimes.Mic1)] > MaxTimeDiff) = 0;
+%allData.Mic2([999; diff(allTimes.Mic2)] > MaxTimeDiff) = 0;
+%allData.Mic3([999; diff(allTimes.Mic3)] > MaxTimeDiff) = 0;
 
 %% Plot all translated data with its respective timestamp
 % Plot all microphone signals (or ADC channels 1, 2, 3)
