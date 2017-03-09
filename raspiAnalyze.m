@@ -66,10 +66,10 @@ allTimes = struct(...   % Organize all timestamps accordingly, unit is us
 
 % Setting all data with to long time diff to zero
 % Using 60 as max time between samples
-MaxTimeDiff = 50;
-allData.Mic1([999; diff(allTimes.Mic1)] > MaxTimeDiff) = 0;
-allData.Mic2([999; diff(allTimes.Mic2)] > MaxTimeDiff) = 0;
-allData.Mic3([999; diff(allTimes.Mic3)] > MaxTimeDiff) = 0;
+%MaxTimeDiff = 50;
+%allData.Mic1([999; diff(allTimes.Mic1)] > MaxTimeDiff) = 0;
+%allData.Mic2([999; diff(allTimes.Mic2)] > MaxTimeDiff) = 0;
+%allData.Mic3([999; diff(allTimes.Mic3)] > MaxTimeDiff) = 0;
 
 %% Plot all translated data with its respective timestamp
 % Plot all microphone signals (or ADC channels 1, 2, 3)
@@ -133,9 +133,9 @@ tmax = a/cair + delay; %Max time between mics
 Ts = 40*10^-6; %Time between samples
 nmax = tmax/Ts; %Max number of samples between mics
 
-sig1 = upsample(allData.Mic1,100);
-sig2 = upsample(allData.Mic2,100);
-sig3 = upsample(allData.Mic3,100);
+sig1 = interp(allData.Mic1,100);
+sig2 = interp(allData.Mic2,100);
+sig3 = interp(allData.Mic3,100);
 
 [c21,lags] = xcorr(sig2,sig1);
 [temp,iv] = max(c21);
