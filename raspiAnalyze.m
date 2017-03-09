@@ -11,8 +11,8 @@ allData = struct(...    % Organize all numerical data, 10 bit ADC, 12 bit DAC ou
     'DAC_Sampled',rawData(:,6),...  % DAC signal sampled back with ADC
     'DAC_Output',rawData(:,end)...    % DAC signal as requested on its output
      );
-% allData.RadarIF_I = allData.RadarIF_I - 512;
-% allData.RadarIF_Q = allData.RadarIF_Q - 512;
+allData.RadarIF_I = allData.RadarIF_I - 512;
+allData.RadarIF_Q = allData.RadarIF_Q - 512;
 
 allTimes = struct(...   % Organize all timestamps accordingly, unit is us
     'Mic1',rawTimes(:,1),...
@@ -108,18 +108,18 @@ thetavec = atan(innerfunc);
 %Doppler shift
 Ts = 40*10^-6; %Time between samples
 I = fft(allData.RadarIF_I);
-Q = fft(allData.RadarIF_Q);
+%Q = fft(allData.RadarIF_Q);
 L = length(I);
 f = (1/Ts)*(0:(L-1))/L;
 f = transpose(f);
 figure(4)
-subplot(2,1,1)
+%subplot(2,1,1)
 plot(f,abs(I))
-ylim([0 1000]);
-xlim([0 1/(2*Ts)]);
-subplot(2,1,2)
-plot(f,abs(Q))
-ylim([0 1000]);
-xlim([0 1/(2*Ts)]);
+ylim([0 30000]);
+xlim([0 500]);
+%subplot(2,1,2)
+%plot(f,abs(Q))
+%ylim([0 30000]);
+%xlim([0 500]);
 
 
