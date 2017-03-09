@@ -47,7 +47,7 @@ void linChirp(double startFreq, double endFreq, double duration, uint32_t elapTi
 /* Main program starts */
 int main(int argc, char **argv){
     /* Assign sampling specific variables */
-    uint32_t samples = 10000; // Take this many samples before ending
+    uint32_t samples = 100000; // Take this many samples before ending
     uint32_t adcLen = 3;       // We need a buffer of 3 bytes per sample per ADC channel.
     uint32_t dacLen = 2;       // We need a buffer of 2 bytes per DAC sequence.
     uint32_t adc_chan = 6;     // We will use 6 ADC channels, 3x mic, 2x radar, 1x DAC. Can be from 1-8
@@ -104,10 +104,11 @@ int main(int argc, char **argv){
         // Update system time variables prior to DAC output sequence, write newSysTime to DAC time buffer.
         timerFunction(&systemTime, &dacTimeBuf[i], &elapsedTime, &timeDifference);
         // Sawtooth signal generation for the DAC output.
-        sawtooth(timeDifference, 200, &dacOut); // Fundamental frequency in Hz.
+        // sawtooth(timeDifference, 200, &dacOut); // Fundamental frequency in Hz.
         // Linear frequecy sweep (chirp-function) generation for the DAC output.
         //linChirp(1000,7000,1,elapsedTime,&dacOut); // Start freq should not be lower than 200 Hz when using the test speaker!!
         // Update buffer for communication with the DAC and push the bytes out.
+        dacOut = 1000;
         dacBuf[i * dacLen + 1] = dacOut & 0x00FF;         // Mask out bits 1-8 first, then
         dacBuf[i * dacLen] = (dacOut >> 8) & 0x00FF;      // Shift right to mask out bits 9-12(9-16, but the 4 MSB should never be ones anyway)
         bcm2835_spi_writenb(&dacBuf[i * dacLen], dacLen); // Send bytes to the DAC for output conversion
