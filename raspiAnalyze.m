@@ -107,8 +107,8 @@ legend('Radar in-phase','Radar quadrature');
 
 %Doppler shift
 Ts = 40*10^-6; %Time between samples
-I = fft(allData.RadarIF_I(10000:20000));
-Q = fft(allData.RadarIF_Q(10000:20000));
+I = fft(allData.RadarIF_I(32500:47500));
+Q = fft(allData.RadarIF_Q(32500:47500));
 L = length(I);
 f = (1/Ts)*(0:(L-1))/L;
 f = transpose(f);
