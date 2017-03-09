@@ -1,49 +1,7 @@
-% This script will import the binary data from files written by the adac.c
-% program on Raspberry Pi. You need to update the path for your respective
-% remote computer system(s) below in order to load the files.
-%
-% The script uses the function raspiImport to do the actual import and
-% conversion from binary data to numerical values. Make sure you have
-% downloaded it as well from itsLearning.
-%
-% After the import function is finished, the data and timestamps are
-% written to separate structs where more intuitive names are used. This
-% part of the script assumes that you are sampling 6 channels in sequence
-% according to the scheme in the block diagram of the labmanual. The data
-% and timestamps are finally plotted according to this scheme. If you did
-% not use the default sampling and DAC output scheme, this part will not
-% work properly.
-
-
-%% Open, import and close binary data files from Raspberry Pi
-
-% First clear everything that was before. Comment this out if you want to
-% keep something that is already open
 clearvars; close all;
-
-% Check computer platform and assign correct path to data files
-%%%%% IMPORTANT %%%%%
-% BE SURE TO HAVE THE FINAL SLASH PRESENT IN THE PATH
-%%%%% IMPORTANT END %%%%%
-
 path = '';
-
-% Run function to import all data and timestamps from the files. It only
-% cares that four data files with specified names exist in the path 
-% location. If you change the names or want to read more/fewer files, you
-% must change the function accordingly.
 [samples, channels, rawData, rawTimes] = raspiImport(path);
 
-%% Write all translated data and timestamps to data structs
-% Here we will use sensible names for the data and timestamps. This part
-% assumes that you have sampled 6 ADC channels with connections according
-% to the block diagram in labmaual and set the DAC output on each loop.
-% This is the default setup in the distributed adac.c program.
-%
-% If you want to do different things, just comment out, change or delete
-% the rest of the script.
-
-% Generate structs
 allData = struct(...    % Organize all numerical data, 10 bit ADC, 12 bit DAC output
     'Mic1',rawData(:,1),... 
     'Mic2',rawData(:,2),...
@@ -71,16 +29,10 @@ allTimes = struct(...   % Organize all timestamps accordingly, unit is us
 %allData.Mic2([999; diff(allTimes.Mic2)] > MaxTimeDiff) = 0;
 %allData.Mic3([999; diff(allTimes.Mic3)] > MaxTimeDiff) = 0;
 
-%% Plot all translated data with its respective timestamp
+%PLOT
 % Plot all microphone signals (or ADC channels 1, 2, 3)
 figure(1);
 subplot(2,1,1);
-%Plot to see the connection between large time diff and weird sample data
-%n = 1:1:10000;
-%plot(n,allData.Mic1, '-o',...
-%    n,allData.Mic2, '-o',...
-%    n,allData.Mic3, '-o'...
-%    );
 plot(allTimes.Mic1*1e-6 ,allData.Mic1, '-o',...
     allTimes.Mic2*1e-6 ,allData.Mic2, '-o',...
     allTimes.Mic3*1e-6 ,allData.Mic3, '-o'...
@@ -91,10 +43,7 @@ xlabel('t [s]');
 ylabel('Conversion value');
 legend('Mic1','Mic2','Mic3');
 
-% Plot time difference between successive samples. We here use the first
-% data column as an example. This info tells you the nominal sample period 
-% for the system, and clearly reveals where the linux scheduler has halted
-% our program. 
+% Plot time difference for the first mic
 subplot(2,1,2);
 plot(diff(allTimes.Mic1), '-o');
 title('Time diff between samples')
