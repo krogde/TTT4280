@@ -34,14 +34,12 @@ figure(4)
 plot(f,abs(I))
 ylim([0 200000]);
 xlim([0 500]);
-
-[val,idx] = max(abs(I));
-Fpeak = f(idx);
+%subplot(2,1,2)
+%plot(f,abs(Q))
+%ylim([0 30000]);
+%xlim([0 500]);
 
 Tsaw = 5*10^-3;
 Fdif = 260*10^6;
 TperF = Tsaw/Fdif;
-
-Tdist = Fpeak*TperF;
-c = 3*10^8;
-Dist = c*Tdist;
+Fpeak = 187.5
