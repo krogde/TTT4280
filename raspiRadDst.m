@@ -21,10 +21,29 @@ xlabel('t [s]');
 ylabel('Conversion value');
 legend('Radar in-phase','Radar quadrature');
 
+sigcut = allData.RadarIF_I(2719:end);
+Ltre = 4081-2719-1;
+Lmax = max(sigcut);
+Lmin = min(sigcut);
+Ldif = Lmax - Lmin;
+Trestig = Ldif/Ltre;
+j = 0;
+for i=1:1:length(sigcut)
+    sigcut(i) = sigcut(i) - (Lmax - Trestig*j);
+    j = j + 1;
+    if j == Ltre
+        j = 0;
+    end
+end
+for i=1:1:length(sigcut)
+   if sigcut(i)<-20
+      sigcut(i) = sigcut(i-1); 
+   end
+end
 
 %Doppler shift
 Ts = 40*10^-6; %Time between samples
-I = fft(allData.RadarIF_I);
+I = fft(sigcut);
 %Q = fft(allData.RadarIF_Q);
 L = length(I);
 f = (1/Ts)*(0:(L-1))/L;
@@ -35,13 +54,13 @@ plot(f,abs(I))
 ylim([0 200000]);
 xlim([0 500]);
 
-[val,idx] = max(abs(I));
-Fpeak = f(idx);
+[val,idx] = max(abs(I(3:end)));
+Fpeak = f(idx+2);
 
-Tsaw = 5*10^-3;
+Tsaw = 50*10^-3;
 Fdif = 260*10^6;
 TperF = Tsaw/Fdif;
 
 Tdist = Fpeak*TperF;
 c = 3*10^8;
-Dist = c*Tdist;
+Dist = c*Tdist/2;
