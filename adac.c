@@ -104,11 +104,11 @@ int main(int argc, char **argv){
         // Update system time variables prior to DAC output sequence, write newSysTime to DAC time buffer.
         timerFunction(&systemTime, &dacTimeBuf[i], &elapsedTime, &timeDifference);
         // Sawtooth signal generation for the DAC output.
-        //sawtooth(timeDifference, 200, &dacOut); // Fundamental frequency in Hz.
+        sawtooth(timeDifference, 200, &dacOut); // Fundamental frequency in Hz.
         // Linear frequecy sweep (chirp-function) generation for the DAC output.
         //linChirp(1000,7000,1,elapsedTime,&dacOut); // Start freq should not be lower than 200 Hz when using the test speaker!!
         // Update buffer for communication with the DAC and push the bytes out.
-        dacOut = 1000;
+        //dacOut = 1000;
         dacBuf[i * dacLen + 1] = dacOut & 0x00FF;         // Mask out bits 1-8 first, then
         dacBuf[i * dacLen] = (dacOut >> 8) & 0x00FF;      // Shift right to mask out bits 9-12(9-16, but the 4 MSB should never be ones anyway)
         bcm2835_spi_writenb(&dacBuf[i * dacLen], dacLen); // Send bytes to the DAC for output conversion
