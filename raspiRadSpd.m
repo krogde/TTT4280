@@ -10,6 +10,16 @@ ylim([0, 4095]) % 12 bit DAC gives only values 0-4095. Note that the
 xlabel('t [s]');
 ylabel('Conversion/set value');
 legend('DAC sampled in','DAC requested output');
+% Plot radar signals
+figure(2);
+plot(allTimes.RadarIF_I*1e-6 ,allData.RadarIF_I, '-o',...
+    allTimes.RadarIF_Q*1e-6 ,allData.RadarIF_Q, '-o'...
+    );
+title('Radar data');
+ylim([0, 1023]) % 10 bit ADC gives only values 0-1023
+xlabel('t [s]');
+ylabel('Conversion value');
+legend('Radar in-phase','Radar quadrature');
 
 
 %Doppler shift
