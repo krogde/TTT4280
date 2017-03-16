@@ -104,7 +104,7 @@ int main(int argc, char **argv){
         // Update system time variables prior to DAC output sequence, write newSysTime to DAC time buffer.
         timerFunction(&systemTime, &dacTimeBuf[i], &elapsedTime, &timeDifference);
         // Sawtooth signal generation for the DAC output.
-        sawtooth(timeDifference, 200, &dacOut); // Fundamental frequency in Hz.
+        sawtooth(timeDifference, 20, &dacOut); // Fundamental frequency in Hz.
         // Linear frequecy sweep (chirp-function) generation for the DAC output.
         //linChirp(1000,7000,1,elapsedTime,&dacOut); // Start freq should not be lower than 200 Hz when using the test speaker!!
         // Update buffer for communication with the DAC and push the bytes out.
