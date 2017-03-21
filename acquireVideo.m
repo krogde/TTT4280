@@ -10,7 +10,7 @@ end
 
 numFrames = v.NumberOfFrames;
 
-%display(['Total frames: ' num2str(numFrames)]);
+display(['Total frames: ' num2str(numFrames)]);
 
 y_red = zeros(1, numFrames);
 y_green = zeros(1, numFrames);
