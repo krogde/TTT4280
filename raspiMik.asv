@@ -1,11 +1,9 @@
 raspiAnalyze;
 % Plot all microphone signals (or ADC channels 1, 2, 3)
 timeDiff = diff(allTimes.Mic1);
-for i=1:1:(length(allData.Mic1)-1)
-   if(timeDiff(i)> 50) 
-      allData.Mic1(i+1) = allData.Mic1(i);
-      allData.Mic2(i+1) = allData.Mic2(i);
-      allData.Mic3(i+1) = allData.Mic3(i);
+for i=1:1:length(allData.Mic1)
+   if(timeDi(i)> 50) 
+      allData.Mic1(i) = allData.Mic1(i);
    end
 end
 figure(1);
