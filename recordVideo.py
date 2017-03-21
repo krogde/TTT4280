@@ -26,9 +26,9 @@ camera.awb_mode = 'off'
 camera.awb_gains = 1
 
 # change this to the path where you want the .h264 file to be saved
-savePath = "/mnt/shared_pi_folder/optics_lab/videos/"
+savePath = ""
 # change this to what you want to name the file
-fileName = "test.h264"
+fileName = "vid.h264"
 # how long we want to record
 recordTime = 30
 
