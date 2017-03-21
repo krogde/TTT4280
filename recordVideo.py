@@ -69,7 +69,7 @@ try:
     os.remove(f)
     print "removed " + savePath+"mp4/"+fileName[:-5]+".mp4"
 except Exception as e:
-	print e
+	pass
     # Entering here means file did not exist, so we can proceed
     # without doing anything
 # This command enters the shell and runs a command as we would there
