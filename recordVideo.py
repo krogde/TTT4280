@@ -22,8 +22,8 @@ camera.iso = 10
 sleep(2)
 # switch these two off so that we can manually control the awb_gains
 camera.exposure_mode = 'off'
-camera.awb_mode = 'off'
-camera.awb_gains = 4
+camera.awb_mode = 'auto'
+#camera.awb_gains = 3
 
 # change this to the path where you want the .h264 file to be saved
 savePath = "/home/pi/Documents/github/TTT4280/"
