@@ -30,11 +30,8 @@ L = length(I);
 f = (1/Ts)*(0:(L-1))/L;
 f = transpose(f);
 figure(4)
-%subplot(2,1,1)
 plot(f,abs(I))
 ylim([0 30000]);
 xlim([0 500]);
-%subplot(2,1,2)
-%plot(f,abs(Q))
-%ylim([0 30000]);
-%xlim([0 500]);
+[val,fmax] = max(abs(I));
+v = freq2speed(f(fmax));

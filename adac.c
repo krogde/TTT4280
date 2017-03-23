@@ -47,7 +47,7 @@ void linChirp(double startFreq, double endFreq, double duration, uint32_t elapTi
 /* Main program starts */
 int main(int argc, char **argv){
     /* Assign sampling specific variables */
-    uint32_t samples = 10000; // Take this many samples before ending
+    uint32_t samples = 100000; // Take this many samples before ending
     uint32_t adcLen = 3;       // We need a buffer of 3 bytes per sample per ADC channel.
     uint32_t dacLen = 2;       // We need a buffer of 2 bytes per DAC sequence.
     uint32_t adc_chan = 6;     // We will use 6 ADC channels, 3x mic, 2x radar, 1x DAC. Can be from 1-8
