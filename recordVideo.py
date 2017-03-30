@@ -28,7 +28,7 @@ camera.awb_mode = 'auto'
 # change this to the path where you want the .h264 file to be saved
 savePath = "/home/pi/Documents/github/TTT4280/"
 # change this to what you want to name the file
-fileName = "vid.h264"
+fileName = "vid5.h264"
 # how long we want to record
 recordTime = 30
 
